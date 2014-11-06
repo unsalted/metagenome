@@ -10,30 +10,21 @@
         // http://park12.wakwak.com/~shp/lc/et/en_aics_script.html
 
 
-        var ballPositions = [[600, 320], [450, 270], [700, 220]];
+        var ballPositions = [[300, 300], [450, 450], [486, 363]];
 
         var handle_len_rate = 2.4;
-        var redPaths = [];
-        var bluePaths = [];
-
-
+        var circlePaths = [];
+        var circleBounds = [];
 
         var radius = 50;
         for (var i = 0, l = ballPositions.length; i < l; i++) {
-            var bluePath = new Path.Circle({
+            var circlePath = new Path.Circle({
                 center: ballPositions[i],
                 radius: randomIntFromInterval(50, 200),
                 fillColor: 'blue'
             });
 
-            /*var redPath = new Path.Circle({
-                center: ballPositions[i],
-                radius: randomIntFromInterval(20, 180),
-                fillColor: 'red'
-            });*/
-
-            bluePaths.push(bluePath);
-            //redPaths.push(redPath);
+            circlePaths.push(circlePath);
         }
 
         function randomIntFromInterval(min,max) {
@@ -56,19 +47,24 @@
             }
         }
 
+        generateConnections(circlePaths);
+
+
         function onFrame(event) {
 
                 for (var i = 0, l = ballPositions.length; i < l; i++) {
                     
-                    var blue = bluePaths[i];
-                    //var red = redPaths[i];
+                    var circle = circlePaths[i];
+
+                    var circleBounds 
                     
-                    var scaleTo = 1 + (Math.sin(event.time * (i+1))/randomIntFromInterval(100,500));
-                    blue.scale(scaleTo);
-                    //red.scale(scaleTo);
                     
-                    generateConnections(bluePaths);
-                    //generateConnections(redPaths);
+                    var scaleTo = 1 + (Math.sin(event.time * 2)/500);
+                    
+                    circle.scale(scaleTo);
+
+                    generateConnections(circlePaths);
+
 
                 }
 
