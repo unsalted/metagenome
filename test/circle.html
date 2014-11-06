@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Smoothing</title>
+    <link rel="stylesheet" href="./css/style.css">
+    <script type="text/javascript" src="../dep/paper/dist/paper-full.js"></script>
+    <script type="text/paperscript" canvas="canvas">
+        var decahedron = new Path.RegularPolygon(new Point(200, 70), 10, 50);
+        decahedron.fillColor = '#e9e9ff';
+        decahedron.selected = true;
+        decahedron.smooth();
+    </script>
+</head>
+<body>
+    <canvas id="canvas" resize></canvas>
+</body>
+</html>
