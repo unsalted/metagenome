@@ -23,30 +23,23 @@
         function randomIntFromInterval(min,max) {
             return Math.floor(Math.random()*(max-min+1)+min);
         }
-
-        console.log(decahedronMid.segments[1].point);
         
 
         function onFrame(event) {
             function waveShape(shape){
                 // Loop through the segments of the path:
-                var prev = amount;
                 for (var i = 0; i <= amount; i++) {
                     var segment = shape.segments[i];
-                    var prevSegment  = shape.segments[i];
                     
+                    console.log(event.time);
+
+                    var x = Math.sin(event.time * 10)+300;
 
                     // A cylic value between -1 and 1
                     var sinus = Math.sin(event.time * 3 + i);
-
-
-
-                    segmentRadian = segment.point.angleInDegrees;
-
                     
                     // Change the y position of the segment point:
-                    segment.point.y = (sinus * height) +300;
-
+                    segment.point.y = sinus * height + 300;
                 }
                 // Uncomment the following line and run the script again
                 // to smooth the path:
