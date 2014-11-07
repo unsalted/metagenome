@@ -16,59 +16,65 @@
         var redPaths = [];
         var bluePaths = [];
 
-
-
-        var radius = 50;
-        for (var i = 0, l = ballPositions.length; i < l; i++) {
-            var bluePath = new Path.Circle({
-                center: ballPositions[i],
-                radius: randomIntFromInterval(50, 200),
-                fillColor: 'blue'
+        function generateCircle(position, radius, color){
+            var path = new Path.Circle({
+                center: position,
+                radius: radius,
+                fillColor: color
             });
-
-            /*var redPath = new Path.Circle({
-                center: ballPositions[i],
-                radius: randomIntFromInterval(20, 180),
-                fillColor: 'red'
-            });*/
-
-            bluePaths.push(bluePath);
-            //redPaths.push(redPath);
+            return path;
         }
+
+        for (var i = 0, l = ballPositions.length; i < l; i++) {
+
+            var radius1 = randomIntFromInterval(50, 180);
+            var radius2 = radius1 - randomIntFromInterval(25, 100);
+
+            bluePaths.push(generateCircle(ballPositions[i], radius1, 'blue'));
+            redPaths.push(generateCircle(ballPositions[i], radius2, 'red'));
+
+
+        }
+
+        //blueLayer.sendToBack();
 
         function randomIntFromInterval(min,max) {
             return Math.floor(Math.random()*(max-min+1)+min);
         }
 
-        var connections = new Group();
-        function generateConnections(paths) {
+        var connectionsRed = new Group();
+        var connectionsBlue = new Group();
+
+        function generateConnections(paths, con) {
             // Remove the last connection paths:
-            connections.children = [];
+            con.children = [];
 
             for (var i = 0, l = paths.length; i < l; i++) {
                 for (var j = i - 1; j >= 0; j--) {
                     var path = metaball(paths[i], paths[j], 0.5, handle_len_rate, 300);
                     if (path) {
-                        connections.appendTop(path);
+                        con.appendTop(path);
                         path.removeOnMove();
                     }
                 }
             }
         }
 
+
         function onFrame(event) {
 
                 for (var i = 0, l = ballPositions.length; i < l; i++) {
                     
                     var blue = bluePaths[i];
-                    //var red = redPaths[i];
+                    var red =  redPaths[i].bringToFront();
+
                     
                     var scaleTo = 1 + (Math.sin(event.time * (i+1))/randomIntFromInterval(100,500));
                     blue.scale(scaleTo);
-                    //red.scale(scaleTo);
+                    red.scale(scaleTo);
                     
-                    generateConnections(bluePaths);
-                    //generateConnections(redPaths);
+                    generateConnections(bluePaths, connectionsRed);
+                    generateConnections(redPaths, connectionsBlue);
 
                 }
 
