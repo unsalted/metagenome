@@ -1,55 +1,21 @@
-//-----------------------------------------------------
-// Draw grid lines
-
-var drawGridLines = function(num_rectangles_wide, num_rectangles_tall, boundingRect) {
-    var width_per_rectangle = boundingRect.width / num_rectangles_wide;
-    var height_per_rectangle = boundingRect.height / num_rectangles_tall;
-    for (var i = 0; i <= num_rectangles_wide; i++) {
-        var xPos = boundingRect.left + i * width_per_rectangle;
-        var topPoint = new paper.Point(xPos, boundingRect.top);
-        var bottomPoint = new paper.Point(xPos, boundingRect.bottom);
-        var aLine = new paper.Path.Line(topPoint, bottomPoint);
-        aLine.strokeColor = 'black';
-        aLine.sendToBack();
-    }
-    for (var i = 0; i <= num_rectangles_tall; i++) {
-        var yPos = boundingRect.top + i * height_per_rectangle;
-        var leftPoint = new paper.Point(boundingRect.left, yPos);
-        var rightPoint = new paper.Point(boundingRect.right, yPos);
-        var aLine = new paper.Path.Line(leftPoint, rightPoint);
-        aLine.strokeColor = 'black';
-        aLine.sendToBack();
-    }
-}
-
-var displayRatio = view.bounds.height/view.bounds.width;
-var gridHeight = 10;
-console.log(gridHeight/displayRatio);
-
-
-
-drawGridLines(gridHeight/displayRatio, gridHeight, view.bounds);
-
-
-//-----------------------------------------------------
-// Organism
-
-var center = view.center;
-var randomIntFromInterval = function(min,max) {
-    return Math.floor(Math.random()*(max-min+1)+min);
-}
-
-var initPositions = [
-    [center.x + randomIntFromInterval(-200, 200), center.y + randomIntFromInterval(-200, 200)],
-    [center.x + randomIntFromInterval(-200, 200), center.y + randomIntFromInterval(-200, 200)],
-    [center.x + randomIntFromInterval(-200, 200), center.y + randomIntFromInterval(-200, 200)]
-];
-
-var layer = 0,
+var initPositions = [[600, 320], [450, 270], [700, 220]],
+    layer = 0,
     maxLayers = 6,
     colors = ['red', 'green', 'blue', 'yellow']
     usedColors = [],
     handle_len_rate = 2.4; 
+
+var randomIntFromInterval = function(min,max) {
+    return Math.floor(Math.random()*(max-min+1)+min);
+}
+
+var play = new Path.RegularPolygon({
+    center: [100, 100],
+    radius: 50,
+    sides: 8,
+    fillColor: 'yellow'
+});
+
 
 var Culture = function (min){
     var parent = this;
@@ -57,11 +23,8 @@ var Culture = function (min){
     this.paths = [];
     this.radii = [];    //store original radius
     this.originBounds = [];   // store original bounds
-    this.originPositions = {x : [], y : []};
     this.minRadius = 20;   //default value;
     this.layer;
-    this.layerGroup = new Group();
-    this.seed = [];
     if (min) this.minRadius = min;
     this.connections = new Group();
 
@@ -84,26 +47,22 @@ var Culture = function (min){
             parent.radii.push(radius);
 
             if (diff) {radius - diff}
-            var sidesArr = [8]; //possibly make this fixed
-            var sides = sidesArr[Math.floor(Math.random() * sidesArr.length)];
+
             var path = new Path.RegularPolygon({
                 center: positions[i],
                 radius: radius,
-                sides: sides,
+                sides: 8,
                 fillColor: color
             });
-            path.smooth();
 
             parent.originBounds.push([path.bounds.width, path.bounds.height]);
-            parent.originPositions.x.push(path.position.x);
-            parent.originPositions.y.push(path.position.y);
 
             //if (randomIntFromInterval(1,3) <= 2)
+            path.smooth();
 
             parent.paths.push(path);
 
         }
-        this.setSeed(0, 20);
         parent.layer = new Layer({
             children: parent.paths
         });
@@ -122,12 +81,7 @@ var Culture = function (min){
             }
         }
     }
-    this.setSeed = function(min, max){
-        for (var i = parent.paths.length - 1; i >= 0; i--) {
-            parent.seed.push(Math.round(Math.random()) * 2 - 1);    // set random neg
-        };
-    }
-    this.scale = function (amount, seed) {
+    this.scale = function (amount) {
         var paths = parent.paths;
         for (var i = 0, l = paths.length; i < l; i++) {
             
@@ -137,42 +91,26 @@ var Culture = function (min){
 
             var w = bounds[0];
             var h = bounds[1];
-            var rn = 1;
 
-            if (seed){
-                rn = parent.seed[i];   // set random negative
-            }
+            path.bounds.height = h + amount;
+            path.bounds.width = w + amount;
 
-            path.bounds.height = h + (amount*rn);
-            path.bounds.width = w + (amount*rn);
-            // reset origin to middle during scale;
-            path.position.x = parent.originPositions.x[i];
-            path.position.y = parent.originPositions.y[i]; 
+
+            path.position.x = path.position.x - amount/2; 
+            path.position.y = path.position.y - amount/2; 
         }
         this.connect();
     }
-    this.appendNode = function(){
-            if (diff) {radius - diff}
-            var sidesArr = [8]; //possibly make this fixed
-            var sides = sidesArr[Math.floor(Math.random() * sidesArr.length)];
-            var path = new Path.RegularPolygon({
-                center: positions[i],
-                radius: radius,
-                sides: sides,
-                fillColor: color
-            });
-            path.smooth();
-    } 
 }
 
+
 var red = new Culture();
-var blue = new Culture();
+var blue = new Culture();     //set min radii to 20
 var green = new Culture();
 
-
-red.generate(initPositions, [80, 250], 'red');
-blue.generate(red.positions, [0, 40], 'blue', red.radii, 0.75);
-green.generate(blue.positions, [0, 10], 'green', blue.radii, 0.65);
+red.generate(initPositions, [50, 200], 'red');
+blue.generate(red.positions, [0, 10], 'blue', red.radii, 0.8);
+green.generate(blue.positions, [0, 20], 'green', blue.radii, 0.75);
 
 function breath(type, length, speed, event){
     var amount = 0;
@@ -189,6 +127,7 @@ function breath(type, length, speed, event){
     return amount; 
 }
 
+console.log(red.paths[0].position.x);
 
 //var blue = new Connections(bluePaths);
 
@@ -271,11 +210,9 @@ function getVector(radians, length) {
 
 function onFrame(event) {
     
-    red.scale(breath('cos', 20, 1, event), true); // type, length, speed, event
-    green.scale(breath('sin', 20, 0.8, event), true);
-    blue.scale(breath('cos', 20, 0.8, event), true);
+    red.scale(breath('cos', 10, 1, event)); // type, length, speed, event
+    green.scale(breath('sin', 10, 0.8, event));
+    blue.scale(breath('cos', 10, 0.5, event));
 
 }
-
-
 
