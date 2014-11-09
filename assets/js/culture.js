@@ -1,15 +1,28 @@
-var handle_len_rate = 2.4;        
+var initPositions = [[600, 320], [450, 270], [700, 220]],
+    layer = 0,
+    maxLayers = 6,
+    colors = ['red', 'green', 'blue', 'yellow']
+    usedColors = [],
+    handle_len_rate = 2.4; 
 
 var randomIntFromInterval = function(min,max) {
     return Math.floor(Math.random()*(max-min+1)+min);
 }
+
+var play = new Path.RegularPolygon({
+    center: [100, 100],
+    radius: 50,
+    sides: 8,
+    fillColor: 'yellow'
+});
 
 
 var Culture = function (min){
     var parent = this;
     this.positions = [];
     this.paths = [];
-    this.radii = [];
+    this.radii = [];    //store original radius
+    this.originBounds = [];   // store original bounds
     this.minRadius = 20;   //default value;
     if (min) this.minRadius = min;
     this.connections = new Group();
@@ -40,6 +53,9 @@ var Culture = function (min){
                 sides: 8,
                 fillColor: color
             });
+
+            parent.originBounds.push([path.bounds.width, path.bounds.height]);
+
             //if (randomIntFromInterval(1,3) <= 2)
                 path.smooth();
 
@@ -48,8 +64,6 @@ var Culture = function (min){
         }
 
     }
-
-    
     this.connect = function (){
         parent.connections.children = [];
         for (var i = 0, l = parent.paths.length; i < l; i++) {
@@ -63,29 +77,26 @@ var Culture = function (min){
             }
         }
     }
+    this.scale = function (ammount) {
+        var paths = parent.paths;
+        for (var i = 0, l = paths.length; i < l; i++) {
+            
+            var path = paths[i];
+
+            var bounds = parent.originBounds[i];  //get bounds
+
+            var w = bounds[0];
+            var h = bounds[1];
+
+            path.bounds.height = h + ammount;
+            path.bounds.width = h + ammount;
+
+
+        }
+        this.connect();
+    }
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-var initPositions = [[600, 320], [450, 270], [700, 220]];
 
 var red = new Culture();
 var blue = new Culture();     //set min radii to 20
@@ -95,44 +106,22 @@ red.generate(initPositions, [50, 200], 'red');
 blue.generate(red.positions, [0, 10], 'blue', red.radii, 0.8);
 green.generate(blue.positions, [0, 20], 'green', blue.radii, 0.75);
 
-
-function breath(culture, toFront, sin, event){
-    var paths = culture.paths;
-    for (var i = 0, l = paths.length; i < l; i++) {
-        var pulse;
-        path = paths[i];
-        var speed = 3;
-        if (event.time%5 <= 0.05){
-            var speed = randomIntFromInterval(1,3); // change speed every 10 seconds; //no idea why this works
-            console.log(speed);
-        }
-
-
-        if (sin == true){
-            pulse = 1 + (Math.sin((event.time/speed) * (i+3))/randomIntFromInterval(500,1000));
-        } else {
-            pulse = 1 + (Math.cos((event.time/speed) * (i+3))/randomIntFromInterval(500,1000));   
-        }
-
-        path.scale(pulse);
+function breath(type, length, speed, event){
+    var amount = 0;
+    switch(type) {
+        case "sin":
+            amount = Math.sin(event.time*speed)*length;
+        break;
+        case "cos":
+            amount = Math.cos(event.time*speed)*length;
+        break;
+        default:
+            amount = 0;
     }
-    culture.connect();
+    return amount; 
 }
 
 //var blue = new Connections(bluePaths);
-
-
-function onFrame(event) {
-
-    breath(red, false, true, event);
-    breath(blue, true, true, event);
-    breath(green, true, true, event);
-
-}
-
-
-
-
 
 // From Metaball Example in Paper.js
 // Ported from original Metaball script by SATO Hiroyuki
@@ -206,3 +195,16 @@ function getVector(radians, length) {
         length: length
     });
 }
+
+//__________________________________________________
+//INIT ANIMATION
+
+
+function onFrame(event) {
+    
+    red.scale(breath('cos', 10, 1, event)); // type, length, speed, event
+    green.scale(breath('cos', 10, 1, event));
+    blue.scale(breath('cos', 10, 1, event));
+
+}
+
