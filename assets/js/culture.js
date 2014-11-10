@@ -1,6 +1,8 @@
 //-----------------------------------------------------
 // Draw grid lines
 
+
+
 var drawGridLines = function(num_rectangles_wide, num_rectangles_tall, boundingRect) {
     var width_per_rectangle = boundingRect.width / num_rectangles_wide;
     var height_per_rectangle = boundingRect.height / num_rectangles_tall;
@@ -49,12 +51,22 @@ var initPositions = [
     genPos(-200, 200),
     genPos(-200, 200)
 ];
-
+var cultures = [];
 var layer = 0,
     maxLayers = 6,
     colors = ['red', 'green', 'blue', 'yellow']
     usedColors = [],
-    handle_len_rate = 2.4; 
+    handle_len_rate = 2.4;
+
+function lookup(array, n){                              //find by id
+    var lookup = {};
+    var array = red.paths;
+    for (var i = 0, len = array.length; i < len; i++) {
+        lookup[array[i].id] = array[i];
+    }
+    return (lookup[n]);
+}
+
 
 var Culture = function (min){
     var parent = this;
@@ -158,7 +170,7 @@ var Culture = function (min){
         }
         this.connect();
     }
-    this.appendNode = function(radius, point){
+    this.appendNode = function(radius, point, index){
         var sidesArr = [8]; //possibly make this fixed
         var path = new Path.RegularPolygon({
             center: point,
@@ -167,31 +179,56 @@ var Culture = function (min){
             fillColor: parent.color
         });
         path.smooth();
-        path.moveBelow(parent.paths[0]);
-        parent.paths.push(path);
+        path.moveBelow(parent.paths[0]);    //move to back of culture
+        parent.paths.push(path);    //set info to array
         parent.originBounds.push([path.bounds.width, path.bounds.height]);
         parent.originPositions.x.push(path.position.x);
         parent.originPositions.y.push(path.position.y);
         this.setSeed();
+        if(index !== 0){
+            cultures[0].appendNode(radius*1.4, point, 0);    //set base
+        }
+        //this.grow(path, radius);
     }
-    this.removeNode = function(i){
+    this.removeNode = function(i, index){
         var path = parent.paths[i];
+        //var id = path._id;
+        path.remove();
         parent.originBounds.splice(i, 1);
         parent.originPositions.x.splice(i, 1);
         parent.originPositions.y.splice(i, 1);
         parent.paths.splice(i, 1);
         this.setSeed();
+        /*if (index !== 0){
+            var n = cultures[0].paths.indexOf(lookup(id));
+            cultures[0].removeNode(n);
+        }*/
     }
+   /* this.grow = function(path, amount){
+        var w = path.bounds.width;
+        var h = path.bounds.height;
+        var origin =  parent.originBounds[parent.paths.indexOf(path)];
+        var orignWidth = origin[0];
+        var orignHeight = origin[1];
+        path.bounds.width = originWidth+amount;
+        path.bounds.height = originHeight+amount; 
+        origin = [path.bounds.width, path.bounds.height];
+    }*/
 }
 
 var red = new Culture();
 var blue = new Culture();
 var green = new Culture();
 
+cultures.push(red);
+cultures.push(green);
+cultures.push(blue);
+
 
 red.generate(initPositions, [80, 250], 'red');
 blue.generate(red.positions, [0, 40], 'blue', red.radii, 0.75);
 green.generate(blue.positions, [0, 10], 'green', blue.radii, 0.65);
+
 
 function breath(type, length, speed, event){
     var amount = 0;
@@ -280,6 +317,7 @@ function roll(odds){
     if (n == odds) return true;
 }
 
+
 var Controller = function(){
     var parent = this;
     this.state;
@@ -293,17 +331,29 @@ var Controller = function(){
         }
         
     }
-    this.run = function(){
-
-         if(parent.count(1) == true){
+    this.run = function(delta){
+        if(parent.count(5) == true){
+            var i = red.paths.length-1; //get highest possible array number
             if (roll(5) == true){
-            red.appendNode(200, genPos(-200, 200));
-
-            console.log('append');
+                var index = randomIntFromInterval(1, cultures.length-1);
+                var cult = cultures[index];
+                var radius = randomIntFromInterval(50,200);
+                var position = genPos(-200, 200);
+                console.log(cult);
+                cult.appendNode(radius, genPos(-200, 200), index);
+            } 
+            if (i > 0){
+                if (roll(5) == true){
+                    var index = randomIntFromInterval(1, cultures.length-1);
+                    console.log(index);
+                    cultures[index].removeNode(randomIntFromInterval(0, i, index));    //random node from array
+                }
             }
-         }
+        }
     }
 }
+
+
 
 // ------------------------------------------------
 function getVector(radians, length) {
@@ -328,9 +378,7 @@ function onFrame(event) {
 
 
     controller.setTime(event);
-    controller.run();
-    
-
+    controller.run(event.delta);
 }
 
 
