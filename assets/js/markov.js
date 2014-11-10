@@ -1278,10 +1278,11 @@ var make_title = function (min_length) {
 };
 
 $(document).ready(function() {
-    
+    var title = make_title(3 + Math.floor(3 * Math.random()));
+        $('#generated_title').html(title);
     setInterval(function() {
         var title = make_title(3 + Math.floor(3 * Math.random()));
         $('#generated_title').html(title);
-    }, 1000);
+    }, 3000);
 
 });
