@@ -24,7 +24,6 @@ var drawGridLines = function(num_rectangles_wide, num_rectangles_tall, boundingR
 
 var displayRatio = view.bounds.height/view.bounds.width;
 var gridHeight = 10;
-console.log(gridHeight/displayRatio);
 
 
 
@@ -39,10 +38,16 @@ var randomIntFromInterval = function(min,max) {
     return Math.floor(Math.random()*(max-min+1)+min);
 }
 
+function genPos(min, max){      //generate random point within range;
+    var pos = [center.x + randomIntFromInterval(min, max), center.y + randomIntFromInterval(min, max)];
+    return pos;
+}
+
+
 var initPositions = [
-    [center.x + randomIntFromInterval(-200, 200), center.y + randomIntFromInterval(-200, 200)],
-    [center.x + randomIntFromInterval(-200, 200), center.y + randomIntFromInterval(-200, 200)],
-    [center.x + randomIntFromInterval(-200, 200), center.y + randomIntFromInterval(-200, 200)]
+    genPos(-200, 200),
+    genPos(-200, 200),
+    genPos(-200, 200)
 ];
 
 var layer = 0,
@@ -55,6 +60,7 @@ var Culture = function (min){
     var parent = this;
     this.positions = [];
     this.paths = [];
+    this.color;
     this.radii = [];    //store original radius
     this.originBounds = [];   // store original bounds
     this.originPositions = {x : [], y : []};
@@ -97,13 +103,14 @@ var Culture = function (min){
             parent.originBounds.push([path.bounds.width, path.bounds.height]);
             parent.originPositions.x.push(path.position.x);
             parent.originPositions.y.push(path.position.y);
+            parent.color = color;
 
             //if (randomIntFromInterval(1,3) <= 2)
 
             parent.paths.push(path);
 
         }
-        this.setSeed(0, 20);
+        this.setSeed();
         parent.layer = new Layer({
             children: parent.paths
         });
@@ -151,18 +158,30 @@ var Culture = function (min){
         }
         this.connect();
     }
-    this.appendNode = function(){
-            if (diff) {radius - diff}
-            var sidesArr = [8]; //possibly make this fixed
-            var sides = sidesArr[Math.floor(Math.random() * sidesArr.length)];
-            var path = new Path.RegularPolygon({
-                center: positions[i],
-                radius: radius,
-                sides: sides,
-                fillColor: color
-            });
-            path.smooth();
-    } 
+    this.appendNode = function(radius, point){
+        var sidesArr = [8]; //possibly make this fixed
+        var path = new Path.RegularPolygon({
+            center: point,
+            radius: radius,
+            sides: 8,
+            fillColor: parent.color
+        });
+        path.smooth();
+        path.moveBelow(parent.paths[0]);
+        parent.paths.push(path);
+        parent.originBounds.push([path.bounds.width, path.bounds.height]);
+        parent.originPositions.x.push(path.position.x);
+        parent.originPositions.y.push(path.position.y);
+        this.setSeed();
+    }
+    this.removeNode = function(i){
+        var path = parent.paths[i];
+        parent.originBounds.splice(i, 1);
+        parent.originPositions.x.splice(i, 1);
+        parent.originPositions.y.splice(i, 1);
+        parent.paths.splice(i, 1);
+        this.setSeed();
+    }
 }
 
 var red = new Culture();
@@ -256,6 +275,36 @@ function metaball(ball1, ball2, v, handle_len_rate, maxDistance) {
     return path;
 }
 
+function roll(odds){
+    var n = Math.floor(Math.random() * odds) + 1;
+    if (n == odds) return true;
+}
+
+var Controller = function(){
+    var parent = this;
+    this.state;
+    this.time = 0;
+    this.setTime = function(event){
+        parent.time = event.time;
+    }
+    this.count = function(n){
+        if (parent.time%n < .02) {     // .02 because of margin of error w/modulo
+            if (parent.time >= n) return true;
+        }
+        
+    }
+    this.run = function(){
+
+         if(parent.count(1) == true){
+            if (roll(5) == true){
+            red.appendNode(200, genPos(-200, 200));
+
+            console.log('append');
+            }
+         }
+    }
+}
+
 // ------------------------------------------------
 function getVector(radians, length) {
     return new Point({
@@ -268,12 +317,19 @@ function getVector(radians, length) {
 //__________________________________________________
 //INIT ANIMATION
 
+var controller = new Controller();
+    
 
 function onFrame(event) {
     
     red.scale(breath('cos', 20, 1, event), true); // type, length, speed, event
     green.scale(breath('sin', 20, 0.8, event), true);
     blue.scale(breath('cos', 20, 0.8, event), true);
+
+
+    controller.setTime(event);
+    controller.run();
+    
 
 }
 
