@@ -29,6 +29,14 @@ var grid = new Layer({
 });
 
 
+//-----------------------------------------------------
+// Create metagenome
+
+var Metagenome = function(){
+    var Sequence = new Layer();
+}
+
+
 function onResize(event) {
     var displayRatio = view.bounds.height/view.bounds.width;    //redraw grid lines
     var gridHeight = 10;
