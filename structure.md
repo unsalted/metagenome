@@ -24,8 +24,8 @@ Add Layer -> Active Layer -> (metagenome)
 
 // LET THERE BE LIGHT
 
-populateOrganism -> (Layer)
-  new Culture (group)
+Populate -> (Layer)
+  spawn culutre (group)
     points
     color
     size
@@ -36,7 +36,7 @@ populateOrganism -> (Layer)
 
 
 // ENVIRONMENTAL FACTORS
-environment
+Environment
   create
   kill
   share
