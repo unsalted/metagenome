@@ -1,9 +1,33 @@
+//----------------------------------------------------
+//Culture.js version 1.0
+
+var center = view.center;
+var handle_len_rate = 2.4;
+var displayRatio = view.bounds.height/view.bounds.width;    //redraw grid lines
+var gridHeight = 10;
+var sizeMax = Math.floor(view.bounds.height/3); //generate max-size based on screen height;
+var grid = new Layer({
+    strokeColor: 'black'
+});
+
+//----------------------------------------------------
+// reuseable
+
+var genPos = function(min, max){      //generate random point within range;
+    var pos = [center.x + randomIntFromInterval(min, max), center.y + randomIntFromInterval(min, max)];
+    return pos;
+}
+
+var randomIntFromInterval = function(min,max) {
+    return Math.floor(Math.random()*(max-min+1)+min);
+}
+
 //-----------------------------------------------------
 // Draw grid lines
 
 
 
-var drawGridLines = function(num_rectangles_wide, num_rectangles_tall, boundingRect) {
+var drawGridLines = function(num_rectangles_wide, num_rectangles_tall, boundingRect, layer) {
     var width_per_rectangle = boundingRect.width / num_rectangles_wide;
     var height_per_rectangle = boundingRect.height / num_rectangles_tall;
     for (var i = 0; i <= num_rectangles_wide; i++) {
@@ -11,6 +35,7 @@ var drawGridLines = function(num_rectangles_wide, num_rectangles_tall, boundingR
         var topPoint = new paper.Point(xPos, boundingRect.top);
         var bottomPoint = new paper.Point(xPos, boundingRect.bottom);
         var aLine = new paper.Path.Line(topPoint, bottomPoint);
+        layer.addChild(aLine);
         aLine.strokeColor = 'black';
         aLine.sendToBack();
     }
@@ -19,240 +44,189 @@ var drawGridLines = function(num_rectangles_wide, num_rectangles_tall, boundingR
         var leftPoint = new paper.Point(boundingRect.left, yPos);
         var rightPoint = new paper.Point(boundingRect.right, yPos);
         var aLine = new paper.Path.Line(leftPoint, rightPoint);
+        layer.addChild(aLine);
         aLine.strokeColor = 'black';
         aLine.sendToBack();
     }
 }
 
-var displayRatio = view.bounds.height/view.bounds.width;
-var gridHeight = 10;
-
-
-
-drawGridLines(gridHeight/displayRatio, gridHeight, view.bounds);
+drawGridLines(gridHeight/displayRatio, gridHeight, view.bounds, grid);
 
 
 //-----------------------------------------------------
-// Organism
+// Create metagenome
 
-var center = view.center;
-var randomIntFromInterval = function(min,max) {
-    return Math.floor(Math.random()*(max-min+1)+min);
-}
+var Metagenome = new Layer();
+var cultureArray = [];
+var environments = [];
 
-function genPos(min, max){      //generate random point within range;
-    var pos = [center.x + randomIntFromInterval(min, max), center.y + randomIntFromInterval(min, max)];
-    return pos;
-}
-
-
-var initPositions = [
-    genPos(-200, 200),
-    genPos(-200, 200),
-    genPos(-200, 200)
-];
-var cultures = [];
-var layer = 0,
-    maxLayers = 6,
-    colors = ['red', 'green', 'blue', 'yellow']
-    opacity = 1,
-    usedColors = [],
-    handle_len_rate = 2.4;
-
-
-function lookup(array, n){                              //find by id
-    var lookup = {};
-    var array = red.paths;
-    for (var i = 0, len = array.length; i < len; i++) {
-        lookup[array[i].id] = array[i];
+var Culture = function(){
+    this.colonies = [];
+    this.data = {
+        spawn : false,
+        kill: false,
+        scale: false,
+        color: {bool: true, color: null},
+        breath: {speed: 1, depth: 0.3},
+        scale: 1
     }
-    return (lookup[n]);
-}
-
-
-var Culture = function (min){
-    var parent = this;
-    this.positions = [];
-    this.paths = [];
-    this.color;
-    this.radii = [];    //store original radius
-    this.originBounds = [];   // store original bounds
-    this.originPositions = {x : [], y : []};
-    this.minRadius = 20;   //default value;
-    this.layer;
-    this.layerGroup = new Group();
-    this.seed = [];
-    if (min) this.minRadius = min;
     this.connections = new Group();
-
-    this.generate = function (positions, range, color, radii, diff){
-        
-        parent.positions = positions;
-
-        for (var i = 0, l = positions.length; i < l; i++) {
-
-            if (radii){ // check if child, scale child layer - variance
-                var radius = (radii[i] * diff) - randomIntFromInterval(range[0], range[1]); 
-            } else {
-                var radius = randomIntFromInterval(range[0], range[1]);
-            }
-
-            if (radius <= parent.minRadius){
-                return;
-            }
-
-            parent.radii.push(radius);
-
-            if (diff) {radius - diff}
-            var sidesArr = [8]; //possibly make this fixed
-            var sides = sidesArr[Math.floor(Math.random() * sidesArr.length)];
-            var path = new Path.RegularPolygon({
-                center: positions[i],
-                radius: radius,
-                sides: sides,
-                fillColor: color,
-                opacity: opacity
-            });
-            path.smooth();
-
-            parent.originBounds.push([path.bounds.width, path.bounds.height]);
-            parent.originPositions.x.push(path.position.x);
-            parent.originPositions.y.push(path.position.y);
-            parent.color = color;
-
-            //if (randomIntFromInterval(1,3) <= 2)
-
-            parent.paths.push(path);
-
+    this.attribute = function(color){       // sets culture styles
+        this.colonies.style = {
+            fillColor: color
         }
-        this.setSeed();
-        parent.layer = new Layer({
-            children: parent.paths
+    }
+    this.spawn = function(pos, point, radius, color, sin, neg){   // spawns and merges child
+        var colony = new Path.Circle({
+                name: 'colony-'+[pos],
+                center: point,
+                fillColor: color,
+                radius: radius,
+                data: {'sin': sin, 'neg': neg}
         });
+        this.colonies.push(colony);
+    }
+    this.scale = function(n){
+        var colonies = this.colonies;
+
 
     }
-    this.connect = function (){
-        parent.connections.children = [];
-        for (var i = 0, l = parent.paths.length; i < l; i++) {
+    this.kill = function(colony){
+        this.removeChild(colony);         // removes child
+    }
+    this.connect = function(){
+        this.connections.children = [];
+        for (var i = 0, l = this.colonies.length; i < l; i++) {
             for (var j = i - 1; j >= 0; j--) {
-                var path = metaball(parent.paths[i], parent.paths[j], 0.5, handle_len_rate, 300);
+                var path = metaball(this.colonies[i], this.colonies[j], 0.5, handle_len_rate, 300);
                 if (path) {
-                    parent.connections.appendTop(path);
-                    parent.connections.moveAbove(parent.paths[i]);
+                    this.connections.appendTop(path);
+                    this.connections.moveAbove(this.colonies[i]);
                     path.removeOnMove();
                 }
             }
         }
     }
-    this.setSeed = function(min, max){
-        for (var i = parent.paths.length - 1; i >= 0; i--) {
-            parent.seed.push(Math.round(Math.random()) * 2 - 1);    // set random neg
-        };
+}
+
+//-----------------------------------------
+// Environment listener
+
+var Environment = function(cult){
+    this.culture = cult;
+    this.spawnColony = function(){
+        if (this.culture.data.spawn){
+            var index = this.culture.colonies.length - 1;
+            var scale = culture.data.scale;
+            var neg = Math.round(Math.random()) * 2 - 1 // random negative;
+            var sin = Math.random()<.5; // true false
+            culture.spawn(index, genPos(-sizeMax, sizeMax), randomIntFromInterval*scale, sin, neg);
+            this.culture.state.spawn = false;
+        }
     }
-    this.scale = function (amount, seed) {
-        var paths = parent.paths;
-        for (var i = 0, l = paths.length; i < l; i++) {
-            
-            var path = paths[i];
+    this.killColony = function(){
+        if (this.culture.data.kill){
+            var length = this.culture.colonies.length;
+            if (length > 1){
+                this.culture.kill(Math.randomIntFromInterval(0, length));
+            } else {
+                Organism.killCulture(culture);
+            }
+            this.culture.data.kill = false;
+        }
+    }
+    this.shareCulture = function(culture1, culture2){
+        //coming
+    }
+    this.breath = function(event){
+        var colonies = this.culture.colonies;
+        for (var i = colonies.length - 1; i >= 0; i--) {
+            var colony = colonies[i];
+            var sin = colony.data.sin;
+            var neg = colony.data.neg;
+            var speed = this.culture.data.breath.speed;
+            var depth = this.culture.data.breath.depth;
+            var bounds = [colony.bounds.height, colony.bounds.width];
+            var amount;
 
-            var bounds = parent.originBounds[i];  //get bounds
 
-            var w = bounds[0];
-            var h = bounds[1];
-            var rn = 1;
-
-            if (seed){
-                rn = parent.seed[i];   // set random negative
+            if (sin){
+                amount = 1+((Math.sin(event.time*1.5)*0.001)*neg);
+            } else {
+                amount = 1+((Math.cos(event.time*1.5)*0.001)*neg);
             }
 
-            path.bounds.height = h + (amount*rn);
-            path.bounds.width = w + (amount*rn);
-            // reset origin to middle during scale;
-            path.position.x = parent.originPositions.x[i];
-            path.position.y = parent.originPositions.y[i]; 
-        }
-        this.connect();
+            colony.scale(amount);
+        }    
+            this.culture.connect();
     }
-    this.appendNode = function(radius, point, index){
-        console.log('append: '+index);
-        var sidesArr = [8]; //possibly make this fixed
-        var path = new Path.RegularPolygon({
-            center: point,
-            radius: radius,
-            sides: 8,
-            fillColor: parent.color,
-            opacity: opacity
-        });
-        path.smooth();
-        path.moveBelow(parent.paths[0]);    //move to back of culture
-        parent.paths.push(path);    //set info to array
-        parent.originBounds.push([path.bounds.width, path.bounds.height]);
-        parent.originPositions.x.push(path.position.x);
-        parent.originPositions.y.push(path.position.y);
-        this.setSeed();
-        if(index !== 0){
-            cultures[0].appendNode(radius*1.4, point, 0);    //set base
-        }
-        //this.grow(path, radius);
-    }
-    this.removeNode = function(i, index){
-        console.log('remove: '+index);
-        var path = parent.paths[i];
-        //var id = path._id;
-        path.remove();
-        parent.originBounds.splice(i, 1);
-        parent.originPositions.x.splice(i, 1);
-        parent.originPositions.y.splice(i, 1);
-        parent.paths.splice(i, 1);
-        this.setSeed();
-        /*if (index !== 0){
-            var n = cultures[0].paths.indexOf(lookup(id));
-            cultures[0].removeNode(n);
-        }*/
-    }
-   /* this.grow = function(path, amount){
-        var w = path.bounds.width;
-        var h = path.bounds.height;
-        var origin =  parent.originBounds[parent.paths.indexOf(path)];
-        var orignWidth = origin[0];
-        var orignHeight = origin[1];
-        path.bounds.width = originWidth+amount;
-        path.bounds.height = originHeight+amount; 
-        origin = [path.bounds.width, path.bounds.height];
-    }*/
+}
+console.log(environments);
+
+var animate = function(event, array){
+    for (var i = array.length - 1; i >= 0; i--) {
+        var env = array[i];
+            env.breath(event);
+            env.killColony(event);
+            env.spawnColony(event);
+    };
 }
 
-var red = new Culture();
-var blue = new Culture();
-var green = new Culture();
-
-cultures.push(red);
-cultures.push(green);
-cultures.push(blue);
+//-----------------------------------------
+// Initialize function / Population control
 
 
-red.generate(initPositions, [80, 250], 'red');
-blue.generate(red.positions, [0, 40], 'blue', red.radii, 0.75);
-green.generate(blue.positions, [0, 10], 'green', blue.radii, 0.65);
+var Population = function(metagenome, array){
+    var parent = this;
+    this.diversity = randomIntFromInterval(2, 4);    // get number of layers
+    this.colonies = randomIntFromInterval(2, 4);
+    this.metagenome = metagenome;
+    this.array = array;
+    var initPositions = [];
+    var initRadii = [];
+    var initScales = [ 1, 0.75, 0.50, 0.25, 0.15];             
+    for (var i = 0; i < colonies; i++) {    // set init positions and radii
+        initPositions.push(genPos(-sizeMax, sizeMax));
+        initRadii.push(randomIntFromInterval(50, 200));
+    };
+    var colors = [
+    'red',
+    'blue',
+    'green',
+    'pink',
+    'putple'
+    ];
 
-
-function breath(type, length, speed, event){
-    var amount = 0;
-    switch(type) {
-        case "sin":
-            amount = Math.sin(event.time*speed)*length;
-        break;
-        case "cos":
-            amount = Math.cos(event.time*speed)*length;
-        break;
-        default:
-            amount = 0;
+    this.spawnCulture = function(culture, color, positions, radii, scale){
+        for (var i = positions.length - 1; i >= 0; i--) {
+            var neg = Math.round(Math.random()) * 2 - 1; //random negative
+            var sin = Math.random()<.5; //true false
+            culture.attribute(color);
+            culture.spawn(i, positions[i], radii[i]*scale, color, sin, neg);
+            culture.colonies.selected = true;
+        };
     }
-    return amount; 
+    this.killCulture = function(culture){
+        culture.remove();
+    }
+    this.start = function(){
+        for (var i = diversity-1; i >= 0; i--) {
+            var culture = new Culture();
+            this.spawnCulture(culture, colors[i], initPositions, initRadii, initScales[i]);      //randomize color order later
+            array.push(culture);
+            var env = new Environment(culture);
+            environments.push(env);
+            culture.connect();
+        }
+            parent.metagenome.addChildren[cultureArray];
+            parent.metagenome.reverseChildren();
+            array.reverse();
+    }
+    return this.start();
 }
 
+var Organism = Population(Metagenome, cultureArray);
 
-//var blue = new Connections(bluePaths);
 
 // From Metaball Example in Paper.js
 // Ported from original Metaball script by SATO Hiroyuki
@@ -324,42 +298,7 @@ function roll(odds){
 }
 
 
-var Controller = function(){
-    var parent = this;
-    this.state;
-    this.time = 0;
-    this.setTime = function(event){
-        parent.time = event.time;
-    }
-    this.count = function(n){
-        if (parent.time%n < .02) {     // .02 because of margin of error w/modulo
-            if (parent.time >= n) return true;
-        }
-        
-    }
-    this.run = function(delta){
-        if(parent.count(5) == true){
-            var i = red.paths.length-1; //get highest possible array number
-            if (roll(5) == true){
-                var index = randomIntFromInterval(1, cultures.length-1);
-                var cult = cultures[index];
-                var radius = randomIntFromInterval(50,200);
-                var position = genPos(-200, 200);
-                cult.appendNode(radius, genPos(-200, 200), index);
-            } 
-            if (roll(5) == true){
-                var index2 = randomIntFromInterval(1, cultures.length-1);
-                var cult2 =  cultures[index2];
-                if (cult2.length >1){
-                    cultures[index].removeNode(randomIntFromInterval(0, i, index));    //random node from array
-                }
-            }        }
-    }
-}
 
-
-
-// ------------------------------------------------
 function getVector(radians, length) {
     return new Point({
         // Convert radians to degrees:
@@ -368,22 +307,26 @@ function getVector(radians, length) {
     });
 }
 
-//__________________________________________________
-//INIT ANIMATION
 
-var controller = new Controller();
-    
+//-----------------------------------------
+// Loops
+
+
+function onResize(event) {
+    displayRatio = view.bounds.height/view.bounds.width;    //redraw grid lines
+    gridHeight = 10;
+    grid.removeChildren();
+    drawGridLines(gridHeight/displayRatio, gridHeight, view.bounds, grid);
+    grid.selected = false;
+    center = view.center;
+
+    sizeMax = Math.floor(view.bounds.height/4); //re-generate max-size based on screen height;
+}
 
 function onFrame(event) {
-    
-    red.scale(breath('cos', 20, 1, event), true); // type, length, speed, event
-    green.scale(breath('sin', 20, 0.8, event), true);
-    blue.scale(breath('cos', 20, 0.8, event), true);
-
-
-    controller.setTime(event);
-    controller.run(event.delta);
+    animate(event, environments);
 }
+
 
 
 
