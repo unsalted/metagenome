@@ -10,11 +10,11 @@ Add Layer -> Active Layer -> (metagenome)
       create
       scale
       color
-    styles->set
+    attribute->set
       color
-    populateColony
-    killColony
-    connectColony
+    populate
+    kill
+    connect
     transform culture
       color
       size->grow/shrink->colony
@@ -36,12 +36,13 @@ populateOrganism -> (Layer)
 
 
 // ENVIRONMENTAL FACTORS
-factors
+environment
   create
   kill
   share
   newCulture
   killCulture
+  breath
 
 
 // EXECUTE ENVIRONMENTAL FACTORS
