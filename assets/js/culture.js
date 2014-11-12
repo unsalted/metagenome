@@ -396,7 +396,7 @@ var God = function (cultures) {
         if(this.count(5)){
             if (Math.random()<.5){
                 // create colony
-                if (this.roll(1)) {
+                if (this.roll(5)) {
                     console.log('count');
                     var membrane = cultures[0];
                     var culture = this.selectCulture()
