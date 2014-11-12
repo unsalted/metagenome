@@ -55,10 +55,8 @@ var cultures = [];
 var layer = 0,
     maxLayers = 6,
     colors = ['red', 'green', 'blue', 'yellow']
-    opacity = 1,
     usedColors = [],
     handle_len_rate = 2.4;
-
 
 function lookup(array, n){                              //find by id
     var lookup = {};
@@ -110,8 +108,7 @@ var Culture = function (min){
                 center: positions[i],
                 radius: radius,
                 sides: sides,
-                fillColor: color,
-                opacity: opacity
+                fillColor: color
             });
             path.smooth();
 
@@ -180,8 +177,7 @@ var Culture = function (min){
             center: point,
             radius: radius,
             sides: 8,
-            fillColor: parent.color,
-            opacity: opacity
+            fillColor: parent.color
         });
         path.smooth();
         path.moveBelow(parent.paths[0]);    //move to back of culture
@@ -308,7 +304,7 @@ function metaball(ball1, ball2, v, handle_len_rate, maxDistance) {
     var path = new Path({
         segments: [p1a, p2a, p2b, p1b],
         style: ball1.style,
-        closed: true,
+        closed: true
     });
     var segments = path.segments;
     segments[0].handleOut = getVector(angle1a - pi2, radius1);

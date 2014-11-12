@@ -40,8 +40,8 @@ Environment
   create
   kill
   share
-  newCulture
-  killCulture
+  newColony
+  killColony
   breath
 
 
