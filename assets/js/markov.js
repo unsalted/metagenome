@@ -1352,6 +1352,18 @@ $(document).ready(function() {
             var title = make_title(3 + Math.floor(3 * Math.random()));
             $('#generated_title').html(title);
             $('#generated_percent').html(randomIntFromInterval(6500, 9999)/100);
+            var dataURL= canvas.toDataURL();
+            // use jQuery to POST the dataUrl to you php server
+            $.ajax({
+                type: "POST",
+                url: "./server/upload.php",
+                data: {image: dataURL}
+            }).done(function( respond ) {
+                // Done...report success or failure
+                // You will get back the temp file name
+                // or "Unable to save this image."
+                console.log(respond);
+            });
         });
     }, 5000);
 });
