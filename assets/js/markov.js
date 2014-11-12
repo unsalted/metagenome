@@ -1356,7 +1356,7 @@ $(document).ready(function() {
             // use jQuery to POST the dataUrl to you php server
             $.ajax({
                 type: "POST",
-                url: "./server/tumbler.php",
+                url: "./server/upload.php",
                 data: {image: dataURL}
             }).done(function( respond ) {
                 // Done...report success or failure

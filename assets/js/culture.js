@@ -6,13 +6,6 @@ window.globals = {};
 
 paper.globals = window.globals;
 
-console.log(paper.globals);
-
-
-
-
-
-
 var center = view.center;
 var handle_len_rate = 2.4;
 var displayRatio = view.bounds.height/view.bounds.width;    // redraw grid lines
@@ -31,10 +24,6 @@ var hex = [
 {hue: 198.82, saturation:0.7824, brightness:0.8771 },   
 {hue:55.29 , saturation:0.8095, brightness:0.9882 }
 ];
-
-for (var i = hex.length - 1; i >= 0; i--) {
-    console.log(new Color(hex[i]).hue);
-};
 
 colorArray = shuffleArray(hex);
 var colorIndex = 0;
@@ -157,7 +146,6 @@ var Culture = function() {
         this.group.style.fillColor = hex;
     }
     this.kill = function(colony) {
-        console.log(colony);
         var index = colony.index;
         this.colonies.splice(index, 1);
         colony.remove();
@@ -220,16 +208,12 @@ var Environment = function(cult) {
             var length = this.culture.colonies.length;
             if (length > 1) {
                 var id = colony.data.uuid;
-                console.log(id);
                 var base = cultureArray[0];
                 var items = Metagenome.getItems({data:{uuid: id}});
-                console.log(items);
 
                 if (items.length !== 0){
                     if (items.length <= 2){
-                        console.log(base.data.color.color);
                         var item = Metagenome.getItems({data:{uuid: id, layer: base.data.layer}});
-                        console.log(item[0]);
                         if (item) base.kill(item[0]);
                     }
                 this.culture.kill(colony);
@@ -397,7 +381,6 @@ var God = function (cultures) {
             if (Math.random()<.5){
                 // create colony
                 if (this.roll(5)) {
-                    console.log('count');
                     var membrane = cultures[0];
                     var culture = this.selectCulture()
                     var data = this.setColony();

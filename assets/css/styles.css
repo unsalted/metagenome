@@ -24,6 +24,21 @@ body {
   font-family: helvetica, arial, sans-serif;
   font-weight: bold;
 }
+#library {
+  position: fixed;
+  left: 40px;
+  bottom: 40px;
+  color: #000000;
+  z-index: 100;
+  background-color: #fff;
+  font-family: helvetica, arial, sans-serif;
+  font-weight: bold;
+  text-decoration: none;
+}
+#library:hover {
+  color: blue;
+  text-decoration: none;
+}
 #generate {
   position: fixed;
   left: 20px;
