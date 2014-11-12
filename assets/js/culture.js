@@ -1,6 +1,18 @@
 //----------------------------------------------------
 //Culture.js version 1.0
 
+window.globals = {};
+
+
+paper.globals = window.globals;
+
+console.log(paper.globals);
+
+
+
+
+
+
 var center = view.center;
 var handle_len_rate = 2.4;
 var displayRatio = view.bounds.height/view.bounds.width;    // redraw grid lines
@@ -12,13 +24,18 @@ var grid = new Layer({
     strokeColor: 'black'
 });
 var hex = [
-'#E71E1C',
-'#324196',
-'#29A83A',
-'#E52084',
-'#2FA3D8',
-'#FCEC30'
+{hue: 0.59, saturation:0.8788, brightness:0.9059 },
+{hue: 231, saturation:0.6667, brightness:0.5882 },   
+{hue: 128.03, saturation:0.756, brightness:0.6588 },   
+{hue: 329.54, saturation:0.8603, brightness:0.898 },   
+{hue: 198.82, saturation:0.7824, brightness:0.8771 },   
+{hue:55.29 , saturation:0.8095, brightness:0.9882 }
 ];
+
+for (var i = hex.length - 1; i >= 0; i--) {
+    console.log(new Color(hex[i]).hue);
+};
+
 colorArray = shuffleArray(hex);
 var colorIndex = 0;
 if (colorIndex == hex.length-1) colorIndex = 0;     //reset
@@ -109,7 +126,8 @@ var Culture = function() {
         kill: { bool:false, colony: {} },
         color: { bool: false, color: null, newColor: null},
         breath: {speed: 1, depth: 0.3},
-        scale: 1
+        scale: 1,
+        layer: 0
     }
     this.connections = new Group();
     this.attribute = function(color) {       // sets culture styles
@@ -117,13 +135,13 @@ var Culture = function() {
             fillColor: color
         }
     }
-    this.spawn = function(index, point, radius, color, sin, neg, uuid) {
+    this.spawn = function(index, point, radius, color, sin, neg, uuid, layer) {
         var colony = new Path.Circle({
                 name: color+'-'+[index],
                 center: point,
                 fillColor: color,
                 radius: radius,
-                data: {'sin': sin, 'neg': neg, 'uuid': uuid, 'color': color}
+                data: {'sin': sin, 'neg': neg, 'uuid': uuid, 'layer': layer, 'color': color}
         });
         var length = this.colonies.length;
         if (length > 1){
@@ -183,8 +201,8 @@ var Environment = function(cult) {
    
 
 
-            this.culture.spawn(index, data.point, data.radius*scale, color, data.sin, data.neg, uuid);
-            base.spawn(baseIndex, data.point, data.radius*(scale+0.25), baseColor, data.sin, data.neg, uuid);   //fix
+            this.culture.spawn(index, data.point, data.radius*scale, color, data.sin, data.neg, uuid, this.culture.data.layer);
+            base.spawn(baseIndex, data.point, data.radius*(scale+0.25), baseColor, data.sin, data.neg, uuid, baseData.layer);   //fix
 
             this.culture.data.spawn.order = false;
             this.culture.connect();
@@ -210,7 +228,7 @@ var Environment = function(cult) {
                 if (items.length !== 0){
                     if (items.length <= 2){
                         console.log(base.data.color.color);
-                        var item = Metagenome.getItems({data:{uuid: id, color: base.data.color.color}});
+                        var item = Metagenome.getItems({data:{uuid: id, layer: base.data.layer}});
                         console.log(item[0]);
                         if (item) base.kill(item[0]);
                     }
@@ -230,22 +248,17 @@ var Environment = function(cult) {
     this.morphCulture = function(){
         if (this.culture.data.color.bool){
             var children = this.culture.group.children;
-            var target;
-            if (this.culture.data.color.newColor) { target = new Color(this.culture.data.color.newColor).hue};
+            var target = this.culture.data.color.newColor ;
             for (var i = children.length - 1; i >= 0; i--) {
-                if (children[i].style.fillColor.hue){
-                    if (Math.round(children[0].style.fillColor.hue) != Math.round(target)){
-                        children[i].style.fillColor.hue += .1;
-                    } else {
-                        this.culture.data.color.bool = false;
-                        this.culture.data.color.color = this.culture.data.color.newColor;
-                    }
+                if (children[i].style.fillColor != target){
+                        children[i].style.fillColor = target;
+                } else {
+                    this.culture.data.color.color = target;
+                    this.culture.data.color.bool = false;
+                    this.culture.group.style.fillColor = target;
                 }
             }
-            if (Math.round(children[0].style.fillColor.hue) >= Math.round(target)){
-                this.culture.data.color.bool = false;
-                this.culture.data.color.color = this.culture.data.color.newColor;
-            }
+            
         }
     }
     this.breath = function(event) {
@@ -307,7 +320,7 @@ var Population = function(metagenome, array) {
        modules.push(guid());
     };
 
-    this.spawnCulture = function(culture, color, positions, radii, scale) {
+    this.spawnCulture = function(culture, color, positions, radii, scale, layer) {
         for (var i = positions.length - 1; i >= 0; i--) {
 
             var neg = Math.round(Math.random()) * 2 - 1; //random negative
@@ -317,7 +330,8 @@ var Population = function(metagenome, array) {
             culture.data.color.color = color;
             culture.group.style.fillColor = color;
             culture.data.scale = scale;
-            culture.spawn(i, positions[i], radii[i]*scale, color, sin, neg, modules[i]);
+            culture.data.layer = layer;
+            culture.spawn(i, positions[i], radii[i]*scale, color, sin, neg, modules[i], layer);
         };
     }
     this.killCulture = function(c) {
@@ -326,7 +340,7 @@ var Population = function(metagenome, array) {
     this.start = function() {
         for (var i = diversity-1; i >= 0; i--) {
             var culture = new Culture();
-            this.spawnCulture(culture, colors[i], initPositions, initRadii, initScales[i]);      //randomize color order later
+            this.spawnCulture(culture, colors[i], initPositions, initRadii, initScales[i], i);      //randomize color order later
             array.unshift(culture);
             var env = new Environment(culture);
             environments.unshift(env);
@@ -389,6 +403,7 @@ var God = function (cultures) {
                     var data = this.setColony();
                     //membrane.data.spawn = data;
                     culture.data.spawn = data;
+                    globals.value = guid();
                 }
             } else if(this.roll(5)) {
                 // kill colony
@@ -396,12 +411,14 @@ var God = function (cultures) {
                     var colony = this.selectColony(culture);
                     culture.data.kill.colony = colony;
                     culture.data.kill.bool = true;
-            } else if(this.roll(10)){
+                    globals.value = guid();
+            } else if(this.roll(20)){
                     var culture = this.selectCulture();
                     var index = colorIndex;
                     culture.data.color.newColor = colorArray[index];
                     culture.data.color.bool = true;
                     colorIndex = index+1;
+                    globals.value = guid();
             } else {
 
             }

@@ -6,12 +6,13 @@
     <link rel="stylesheet" href="./assets/css/styles.css">
     <script src="//ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
     <script type="text/javascript" src="./dep/paper/dist/paper-full.js"></script>
-    <script type="text/paperscript" src="./assets/js/metaball.js" canvas="canvas" ></script>
     <script type="text/javascript" src="./assets/js/markov.js"></script>
+    <script type="text/paperscript" src="./assets/js/metaball.js" canvas="canvas" ></script>
 
 </head>
 <body>
-    <div id="generated_title"></div>
+    <div id="title"><span>Closest variant: </span><span id="generated_title"></span></div>
+    <div id="percent"><span id="generated_percent"></span><span>% similarity</div>
     <canvas id="canvas" resize></canvas>
 </body>
 <script type="text/paperscript" src="./assets/js/culture.js" canvas="canvas" ></script>
