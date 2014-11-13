@@ -46,7 +46,7 @@ Environment
 
 
 // EXECUTE ENVIRONMENTAL FACTORS
-execute->FACTORS //loop
+God->FACTORS //loop
   create
   kill
   share
