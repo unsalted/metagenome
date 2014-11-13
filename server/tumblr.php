@@ -75,8 +75,6 @@ curl_setopt($ch, CURLOPT_HTTPHEADER, array(
     "Content-type: " . $headers["Content-type"],
     "Expect: ")
 );
- ?>hello <?php
- 
 $params = http_build_query($params);
  
 curl_setopt($ch, CURLOPT_POST, 1);
