@@ -1362,7 +1362,7 @@ $(document).ready(function() {
             $.ajax({
                 type: "POST",
                 url: "./server/tumblr.php",
-                data: {image: dataURL, text: title, name: imgname }
+                data: {image: dataURL, name: title }
             }).done(function( response ) {
                 // Done...report success or failure
                 // You will get back the temp file name

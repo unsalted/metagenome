@@ -5,7 +5,10 @@
 if ( isset($_POST["image"]) && !empty($_POST["image"]) ) {    
 
     // get the dataURL
-    $dataURL = $_POST["image"];  
+    $dataURL = $_POST["image"];
+
+    // get the title
+    $title = $_POST["name"];  
 
     // the dataURL has a prefix (mimetype+datatype) 
     // that we don't want, so strip that prefix off
@@ -80,7 +83,7 @@ function oauth_sig($method, $uri, $params) {
  
  
 $headers = array("Host" => "http://api.tumblr.com/", "Content-type" => "application/x-www-form-urlencoded", "Expect" => "");
-$params = array("data" => array(file_get_contents($file), "type" => "photo");
+$params = array("data" => array(file_get_contents($file)), "caption" => $title, "type" => "photo");
  
 $blogname = "metagenome.tumblr.com";
 oauth_gen("POST", "http://api.tumblr.com/v2/blog/$blogname/post", $params, $headers);
