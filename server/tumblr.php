@@ -1,14 +1,10 @@
 <?php
- 
-#Requires PHP 5.3.0
 
 $encoded = $_POST['image'];
-$encoded = str_replace(' ', '+', $encoded);
 $decoded = base64_decode($encoded);
-
-
-echo $decoded;
-
+ 
+#Requires PHP 5.3.0
+ 
 define("CONSUMER_KEY", "2vfOYl2Id7buV71JSVFrZ8RkQkyNjZ9MPN5WA9FNSxDD6Yhdll");
 define("CONSUMER_SECRET", "nB0CaTOdx37uRYQu5ngCLOkzklbmY1W2GbA4MM18Sy9njBSZ4G");
 define("OAUTH_TOKEN", "DYLW3yBqimNJdk0XVYuyc3gIoKsLKZOo7t9WK138l5LUkRynPd");
@@ -75,10 +71,12 @@ curl_setopt($ch, CURLOPT_HTTPHEADER, array(
     "Content-type: " . $headers["Content-type"],
     "Expect: ")
 );
+ 
 $params = http_build_query($params);
  
 curl_setopt($ch, CURLOPT_POST, 1);
 curl_setopt($ch, CURLOPT_POSTFIELDS, $params);
+ 
 $response = curl_exec($ch);
 print $response;
 ?>
