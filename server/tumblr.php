@@ -2,12 +2,6 @@
  
 #Requires PHP 5.3.0
 
-//Get Image
-header('Content-type: image/png');
-     
-# we are an attachment (eg download), and we have a name
-header('Content-Disposition: attachment; filename="' . $_POST['name'] .'"');
-
 $encoded = $_POST['image'];
 $encoded = str_replace(' ', '+', $encoded);
 $decoded = base64_decode($encoded);
@@ -88,5 +82,5 @@ $params = http_build_query($params);
 curl_setopt($ch, CURLOPT_POST, 1);
 curl_setopt($ch, CURLOPT_POSTFIELDS, $params);
 $response = curl_exec($ch);
-//print $response;
+print $response;
 ?>

@@ -1363,11 +1363,11 @@ $(document).ready(function() {
                 type: "POST",
                 url: "./server/tumblr.php",
                 data: {image: dataURL, text: title, name: imgname }
-            }).done(function( respond ) {
+            }).done(function( response ) {
                 // Done...report success or failure
                 // You will get back the temp file name
                 // or "Unable to save this image."
-                console.log(respond);
+                console.log(response);
             });
         });
     }, 5000);
