@@ -8,18 +8,17 @@ header('Content-type: image/png');
 # we are an attachment (eg download), and we have a name
 header('Content-Disposition: attachment; filename="' . $_POST['name'] .'"');
 
-$encoded = $_POST['imgdata'];
+$encoded = $_POST['image'];
 $encoded = str_replace(' ', '+', $encoded);
 $decoded = base64_decode($encoded);
 
 
 echo $decoded;
 
-
 define("CONSUMER_KEY", "2vfOYl2Id7buV71JSVFrZ8RkQkyNjZ9MPN5WA9FNSxDD6Yhdll");
 define("CONSUMER_SECRET", "nB0CaTOdx37uRYQu5ngCLOkzklbmY1W2GbA4MM18Sy9njBSZ4G");
-define("OAUTH_TOKEN", "3lv8csV1pSNbtUXA5MloftEjxwc3DQTwx6d6oHoa27IjXpFjmi");
-define("OAUTH_SECRET", "h5P09YHYGMriUQi17Y242Q5Pm9g7RmK02SeeHL6l2eyPtbQCo0");
+define("OAUTH_TOKEN", "DYLW3yBqimNJdk0XVYuyc3gIoKsLKZOo7t9WK138l5LUkRynPd");
+define("OAUTH_SECRET", "mjwgcl7BSB8fcz4hxS8EpZdkn8KTBK2gMiCv3RgziC2viJ5H0u");
  
 function oauth_gen($method, $url, $iparams, &$headers) {
     

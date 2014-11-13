@@ -1353,11 +1353,16 @@ $(document).ready(function() {
             $('#generated_title').html(title);
             $('#generated_percent').html(randomIntFromInterval(6500, 9999)/100);
             var dataURL= canvas.toDataURL();
+
+            var d = new Date();
+            var date = d.getTime();
+            var imgname ='metagenome-'+date+'.png';
+
             // use jQuery to POST the dataUrl to you php server
             $.ajax({
                 type: "POST",
-                url: "./server/upload.php",
-                data: {image: dataURL}
+                url: "./server/tumblr.php",
+                data: {image: dataURL, text: title, name: imgname }
             }).done(function( respond ) {
                 // Done...report success or failure
                 // You will get back the temp file name
