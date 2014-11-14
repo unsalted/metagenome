@@ -13,11 +13,6 @@
       #messages li:nth-child(odd) { background: #eee; }
     </style>
   </head>
-
-<script src="https://cdn.socket.io/socket.io-1.2.0.js"></script>
-<script>
-  var socket = io().connect("http://node-metagenome.rhcloud.com:3000");
-</script>
   <body>
     <ul id="messages"></ul>
     <form action="">
@@ -26,7 +21,7 @@
     <script src="https://cdn.socket.io/socket.io-1.2.0.js"></script>
     <script src="http://code.jquery.com/jquery-1.11.1.js"></script>
     <script>
-      var socket = io();
+      var socket = io().connect("http://node-metagenome.rhcloud.com:8000");
       $('form').submit(function(){
         socket.emit('chat message', $('#m').val());
         $('#m').val('');
