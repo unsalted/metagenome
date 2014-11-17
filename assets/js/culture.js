@@ -17,7 +17,7 @@ var center = view.center;
 var view_size = view.bounds.height;
 if (view.bounds.width < view.bounds.height) view_size = view.bounds.width;
 
-var view_ratio = (view_size/1000);     // generate object ratio based on screen height;
+var view_ratio = (view_size/1000)/3;     // generate object ratio based on screen height;
 
 
 
@@ -41,26 +41,10 @@ colorArray = shuffleArray(hex);
 var colorIndex = 0;
 if (colorIndex == hex.length-1) colorIndex = 0;     //reset
 
-var guid = (function() {
-  function s4() {
-    return Math.floor((1 + Math.random()) * 0x10000)
-               .toString(16)
-               .substring(1);
-  }
-  return function() {
-    return s4() + s4() + '-' + s4() + '-' + s4() + '-' +
-           s4() + '-' + s4() + s4() + s4();
-  };
-})();
 
 //----------------------------------------------------
 // helpers
 
-//generate random point within range;
-var genPos = function(min, max) {      
-    var pos = [center.x + randomIntFromInterval(min, max), center.y + randomIntFromInterval(min, max)];
-    return pos;
-}
 
 //generate random int;
 var randomIntFromInterval = function(min,max) {
@@ -162,7 +146,7 @@ var Create  = function(obj){
         var coln = obj;
         var colony = new Path.Circle({
             name: coln.uid,
-            center: (new Point(coln.point)+center)*view_ratio,
+            center: (new Point(coln.point)*view_ratio)+center,
             radius: coln.radius*view_ratio
         });
         return colony;
