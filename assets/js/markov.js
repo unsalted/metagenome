@@ -1359,16 +1359,18 @@ $(document).ready(function() {
             var imgname ='metagenome-'+date+'.png';
 
             // use jQuery to POST the dataUrl to you php server
-            $.ajax({
-                type: "POST",
-                url: "./server/tumblr.php",
-                data: {image: dataURL, name: title }
-            }).done(function( response ) {
-                // Done...report success or failure
-                // You will get back the temp file name
-                // or "Unable to save this image."
-                console.log(response);
-            });
+            if (document.location.hostname != "localhost"){
+                $.ajax({
+                    type: "POST",
+                    url: "./server/tumblr.php",
+                    data: {image: dataURL, name: title }
+                }).done(function( response ) {
+                    // Done...report success or failure
+                    // You will get back the temp file name
+                    // or "Unable to save this image."
+                    console.log(response);
+                });
+            }
         });
     }, 5000);
 });
