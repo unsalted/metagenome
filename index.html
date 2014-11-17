@@ -17,8 +17,8 @@
     var socket = io('http://node-metagenome.rhcloud.com:8000');
 
     socket.on('change state', function(obj){
-        state_change = true;
         server = obj;
+        state_change = true;
     });
 
     </script>

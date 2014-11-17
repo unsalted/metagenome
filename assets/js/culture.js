@@ -18,7 +18,7 @@ var view_size = view.bounds.height;
 if (view.bounds.width < view.bounds.height) view_size = view.bounds.width;
 
 var view_ratio = (view_size/1000)/3;     // generate object ratio based on screen height;
-
+var object_ratio = (view_size/1000);
 
 
 var handle_len_rate = 2.4;
@@ -111,7 +111,7 @@ drawGridLines(gridHeight/displayRatio, gridHeight, view.bounds, grid);
 // Generate biome
 
 var Create  = function(obj){
-    var layer = new Layer();
+    layer = new Layer();
     var object = obj;
 
     this.genome = layer;
@@ -137,7 +137,6 @@ var Create  = function(obj){
         culture.style = {
             fillColor: cult.color
         };
-        console.log(cult.color.hue);
 
         return culture;
     }
@@ -146,23 +145,35 @@ var Create  = function(obj){
         var coln = obj;
         var colony = new Path.Circle({
             name: coln.uid,
-            center: (new Point(coln.point)*view_ratio)+center,
-            radius: coln.radius*view_ratio
+            center: (new Point(coln.point)*view_ratio)+center,  //scale for screen position relative to center
+            radius: coln.radius*object_ratio
         });
         return colony;
+    }
+
+    this.connect = function(array,culture) {
+        var colonies = culture.colonies;
+        for (var i = 0, l = colonies.length; i < l; i++) {
+            for (var j = i - 1; j >= 0; j--) {
+                //call metaball through paper scope
+                var path = paper.metaball(colonies[i], colonies[j], 0.5, handle_len_rate, 300);
+                if (path) {
+                    connections.appendTop(path);
+                    connections.moveAbove(colonies[i]);
+                    path.removeOnMove();
+                }
+            }
+        }
     }
 
     this.start = function(){
         var genome = layer;
         var cultures = object.cultures;
         for (var i = 0; i < object.index.cultures_length; i++) {
-            console.log('push');
             genome.addChild(this.newCulture(cultures[i]));
         };
     }
 }
-
-var create = new Create();
 
 
 
@@ -180,8 +191,14 @@ function onResize(event) {
     grid.selected = false;
     center = view.center;
 
-    spread = Math.floor(view.bounds.height/4); //re-generate max-size based on screen height;
+    view_size = view.bounds.height;
+    if (view.bounds.width < view.bounds.height) view_size = view.bounds.width;
+    view_ratio = (view_size/1000)/3;     // re-generate object ratio based on screen height;
+    object_ratio = (view_size/1000);
 }
+
+//init create
+var create = new Create();
 
 function onFrame(event) {
     if (init && isEmpty(server) == false){
@@ -190,7 +207,11 @@ function onFrame(event) {
         init = false;
     }
     if (state_change && isEmpty(server) == false){
-        //console.log(server);
+        create.genome.remove();
+        console.log('remove');
+        create = new Create();
+        create.object = server;
+        create.start();
         state_change = false;
     }
 }
