@@ -1351,7 +1351,7 @@ $(document).ready(function() {
         globals.watch('value', function(){
             var title = make_title(3 + Math.floor(3 * Math.random()));
             $('#generated_title').html(title);
-            $('#generated_percent').html(randomIntFromInterval(6500, 9999)/100);
+            $('#generated_percent').html(randomIntFromInterval(6500, 9999)/100); //e.g 65.00 - 99.99
             var dataURL= canvas.toDataURL();
 
             var d = new Date();
