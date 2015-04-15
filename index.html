@@ -7,14 +7,15 @@
     <script src="//ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
     <script type="text/javascript" src="./dep/paper/dist/paper-full.js"></script>
     <script type="text/javascript" src="./assets/js/markov.js"></script>
-    <script type="text/javascript" src="./assets/js/markov.js"></script>
     <script type="text/paperscript" src="./assets/js/metaball.js" canvas="canvas" ></script>
     <script src="http://node-metagenome.rhcloud.com:8000/socket.io/socket.io.js"></script>
 
     <script>
 
 
-    var socket = io('http://node-metagenome.rhcloud.com:8000');
+    //var socket = io('http://node-metagenome.rhcloud.com:8000');
+    var socket = io('http://localhost:3000');
+
 
     socket.on('change state', function(obj){
         server = obj;
