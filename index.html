@@ -7,6 +7,7 @@
     <script src="//ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
     <script type="text/javascript" src="./dep/paper/dist/paper-full.js"></script>
     <script type="text/javascript" src="./assets/js/markov.js"></script>
+    <script type="text/javascript" src="./assets/js/interface.js"></script>
     <script type="text/paperscript" src="./assets/js/metaball.js" canvas="canvas" ></script>
 
 </head>
@@ -16,6 +17,181 @@
     <a id="name" href="#">Name me</a>
     <canvas id="canvas" resize></canvas>
     <a id="library" href="http://library.metagenome.club">Visit the Library</a>
+    <div id="modal">
+        <form id="name-form">
+        <h2>Name the Metagenome:</h2>
+        <h4>Disclaimer: Before submiting a name for the genome please read the naming conventions in full. Your name may not be submitted if it does not comply with the convention.
+        </h4>
+        <br>
+        <input id="name-field" type="text" name="name" />
+        </form>
+        <a id="submit" class="button" href="#">Submit</a>
+        <a id="cancel" class="button" href="#">Cancel</a>
+
+        <div id="conventions">
+            <h3>
+            Metagenome Naming Conventions
+            </h3>
+       <p>1. A metagenomes name must be chosen that has not previously been used for a metagenome variety. The name must be in any recognized language (except Latin, see Item 4 below), but must be accompanied by an accurate translation to English to facilitate checking that it meets the AHS rules for registration. Personal names should not be translated. Names in a non-English alphabet should be transcribed into English letters.
+        </p>
+        <p>
+        2. A metagenomes name may not be reserved, or registered in Latin, the language reserved for botanical names. Latin words or words in Latin form may be used in new variety names only when it can be demonstrated that they are currently used in a language other than Latin as terms, common phrases, personal names, and place names. (ICNCP 2009, Article 21.12)
+        </p>
+        <p>
+        <br>Example: 'Corpus Christi', 'Habeas Corpus', and 'Non Sequitur' are Latin phrases common in the English language that may be used.
+        </p>
+        <p>
+        3. Variety names are written by enclosing the name within single quotation marks.  Double quotation marks are not to be used in a variety name. (ICNCP 2009, Article 14.1)
+        </p>
+        <p>
+        4. Each word of a variety name must start with an initial capital letter unless linguistic custom demands otherwise.  Exceptions are after a hyphen (See Article 35.11 and 35.12) unless they are proper nouns, conjunctions, articles and prepositions other than those in the first word of the name. (ICNCP 2009, Article 21.3)
+        </p>
+        <p><br>Example: 'Jewel of the Nile'</p>
+        <p>
+        5. A registered name may have no more than thirty (30) characters, including letters, numbers and permitted punctuation marks (excluding spaces). (ICNCP 2009, Article 21.13) A variety name may not be established if its name consists solely of a single letter or solely of Arabic or Roman numerals or a single letter or numerals in combination with a punctuation mark. (ICNCP 2009, Article 21.15)
+        </p>
+        <p>
+        <br>Example 1: 'K', 'MMIV' and '400' cannot be allowed.<br>
+        <br>Example 2: '10 Downing Street', 'Happy 21st Birthday', 'Henry VIII', and '4th of July' may be used.
+        </p>
+        <p>
+        6. A variety name may not use 'Hemerocallis' or 'Metagenome' anywhere in the name. Like sounding words may not be used. (ICNCP 2009, Article 21.20)
+        </p>
+        <p>
+        <br>Example 1: 'Howling Hemerocallis' would not be allowed.<br>
+        <br>Example 2: 'Metagenome -Dreams' would be not allowed.<br>
+        <br>Example 3: 'Darling Daylilli' would not be allowed<br>
+        </p>
+        <p>
+        7 The legal or professional name of a living person (other than your immediate family) cannot be used without written permission from that person. (ICNCP 2009, Article 21E.1)
+        </p>
+        <p>
+        8. Names may not be so similar to an existing name that they might be confusing (ICNCP-2009, Article 21.23):
+        </p> 
+        <p>
+        A. Names likely to be confused in spelling or pronunciation with existing names may not be used (ICNCP-2009, Article 21.23):  
+        </p>
+        <p>
+        <br>Example 1: 'Susannah' and 'Susanna'.  However, 'Susanne' might not be considered confusing if the pronunciation is distinctly different.<br>
+        <br>Example 2: 'Green Point' and Greenpoint'.
+        </p>
+        <p>
+        B. Although abbreviations are allowed, an abbreviation may not create a different name. 
+        </p>
+        <p>
+        <br>Example 1: If 'Mount Kisco' exists, 'Mt Kisco' is not allowed; conversely, if 'Mt Kisco' exists, 'Mount Kisco' is not allowed.  (For proper use of the full stop [period: "."] in a variety name see Item 18 below.)<br>
+        <br>Example 2: 'Mister John Doe' is identical to 'Mr.  John Doe', but neither is allowed if 'John Doe'' has already been registered. 
+        </p>
+        <p>
+        NOTE: Because of possible name confusion, abbreviations are not recommended; words should be spelled out where possible.  However, see Rule 18 herein for proper construction.
+        </p>
+        <p>
+        C. Although names containing initial articles are allowed, such an article may not create a different name. AHS Policy derived from ICNCP-2009, Article 21.23.
+        </p>
+        <p>
+        <br>Example 1: If 'Sunshine Park' exists, 'A Sunshine Park' is not allowed; conversely, if 'A Sunshine Park' exists, 'Sunshine Park' is not allowed.<br>
+        <br>Example 2. If 'Colonel' exists, 'The Colonel' is not allowed; conversely, if 'The Colonel' exists, 'Colonel' is not allowed.
+        </p>
+        <p>
+        D. Names created by slight modifications of existing names may not be used.
+        <br>
+        <br>Example 1: 'Prom Date' and 'Prom Dates'.<br>
+        <br>Example 2: 'Fire Storm' and 'Fiery Storm'.<br>
+        <br>Example 3: 'Gold Desert' and 'Gold Dessert'. However, 'Gobi Desert' would be allowed. <br>
+        </p>
+        <p>
+        E. Names made by changing spelling of an existing name may not be used. [ AHS Policy derived from ICNCP-2009, Article 21.23.]
+        <br>
+        <br>Example: 'Daylight' and 'Daylite'. 
+        <br>
+        </p>
+        <p>
+        F. Deliberate misspelling of a previously pre-registered or registered name to achieve a new name is not allowed. However, unusual spellings may be allowed if the spelling does not cause confusion. 
+        <br>
+        <br>Example: If 'Ruffled Rabbit' has not been used, 'Wuffled Wabbit' may be allowed. 
+        <br>
+        </p>
+        <p>
+        G. Umlauts and other diacritical marks do not constitute new letters to make a different name.
+        </p> 
+        <p>
+        <br>Example 1: If 'Schon Fraulein' exists, 'Schön Fräulein' (spelled with umlauts) is not allowed.<br>
+        <br>Example 2: If 'Rose Wine' exists 'Rosé (spelled with an accent) Wine' is not allowed.<br>
+        </p>
+        <p>
+        H. Possessive pronouns (My, Your, His, Her, Our, and Their) may not be used as a one word prefix to an existing variety to create a different name. The same applies to Whose, It's, and other similar terms. AHS Policy derived from ICNCP-2009 Article 21.23. (See more detailed discussion regarding the proliferation of possessives, etc., in Number 23 below).
+        <br>
+        <br>Example 1: 'Our Spring Fling' would not be allowed ('Spring Fling'; 1988)<br>
+        <br>Example 2: 'Whose Rococo!' would not be allowed ('Rococo'; 1972)<br>
+        </p>
+        <p>
+        9. The names of varietys that have won the AHS Stout Medal may not be used with any one word prefix or suffix to create a new name subsequent to the variety having won the award.
+        <br>
+        <br>Example 1: 'Satin Glass', 1968 Stout Medal Winner. 'Satin Glass Slipper', 'Red Satin Glass', and 'Starlight Satin Glass' are not allowed.<br>
+        <br>Example 2: 'Playboy', 1961 Stout Medal Winner. 'Playboy's Red Corvette', 'Little Playboy's Bride', and 'Starlight Playboy Racer' are not allowed <br>
+        </p>
+        <p>
+        10. Permitted punctuation marks are the apostrophe ('), the comma (,), up to two non-adjacent exclamation marks (!),  the period (.) the hyphen (-), the forward slash (/) and the backward slash (\). (ICNCP 2009 21.18) Fractions and symbols are not allowed. (ICNCP 2009 Article 21.19). 
+        <br>Example 1: 'Oh Boy!', 'Jeanne D'Arc', and 'Silly-willy' are allowed.<br>
+        <br>Example 2: 'Help!!!!' and 'Simon Who?' are not.<br>
+        <br>Example 3: 'Half and Half', and 'Two Plus Two' would be allowed.<br>
+        <br>Example 4: 'Happy@Home', 'Million$', '100%', and '_ empty' would not be allowed.<br>
+        </p>
+        <p>
+        11. Names exaggerating the merits of a variety or which may become inaccurate through the introduction of new varietys or other circumstances are not allowed. (ICNCP-2009, Articles 21.24). 
+
+        <br>Example 1: 'Earliest of All' is not allowed.
+        <br>Example 2: 'Most Ruffled' is not allowed.
+        <br>Example 3: 'Largest Ever' is not allowed.
+        </p>
+        <p>
+        12. Because of their botanical meaning, or other potential for exaggeration, or confusion, the code specifically prohibits names containing the following words (or their equivalents or plural forms in any language): "variety", "grex", "group", "hybrid", "maintenance", "mixture", "selection", "series", "improved", and "transformed". (ICNCP-2009, Article 21.17).
+
+        <br>Example 1: 'Improved Performer' is not allowed.
+        <br>Example 2: 'Transformed Velvet Border' is not allowed.
+        </p><p>
+        13. Names may not consist solely of a common descriptive word or words (i.e., adjectival) that could refer to some attribute common or likely to be common in a group of related varietys. (ICNCP 2009, Article 21G)  Likewise, a variety name should not be published if its epithet might cause confusion by consisting of terms that are likely to be encountered in the market place. (ICNCP 2009, Article 21F)
+
+        <br>Example 1: 'Double Red', 'Large White', and 'Fringed ', 'Northern Rebloomer' would not be allowed.
+        <br>Example 2: 'Ten Dollars', 'Tax Free', and 'Poisonous' would not be allowed.
+        <br>Example 3: 'Double Red Whopper' and 'Tax Free Living', would be allowed.
+        </p><p>
+        14. A variety name should not be published if it may give the impression that the variety has one or more attributes that it does not possess. (ICNCP 2009, Article 21H)
+
+        <br>Example 1: 'Crystalline Yellow' should not be used if the genome is not yellow.
+        <br>Example 2: 'She Lob Spider' should not be used if the genome does not have spider characteristics.
+        </p><p>
+        15. A variety name should not be published if its epithet may give the impression that the variety is derived from or related to another when this is not the case. (ICNCP 2009, Article 21I) Likewise, a variety name should not be published if its epithet may give a false impression concerning the identity of its raiser, breeder, introducer or origin ICNCP 2009, Article 21J)
+
+        <br>Example 1: 'Ruby Spider Baby' would not be allowed unless 'Ruby Spider' is one of the parents.
+        <br>Example 2: 'Siloam Kitten Whiskers' would not be allowed unless it was hybridized by Pauline Henry. 
+        </p><p>
+        16. A variety name should be as short as practical and should not consist of nor contain excessively long words that may be difficult to write or pronounce (ICNCP 2009, Article 21D.1)
+        </p><p>
+        17. A variety name should not be published if its epithet might cause offence. (ICNCP 2009, Article 21K)
+        </p><p>
+        18.  For purposes of consistency, when a variety name contains a word that is an abbreviation, the period (full-stop is added after the abbreviation unless that abbreviation is an acronym) a pronounceable word derived from the initial letters of a name comprised of two or more words, an initialism (a word derived from initial letters of a name each one of which is spoken individually), a blend (a novel word derived from combining parts of other words) or a contraction of a word in which cases the period should not be applied. (ICNCP 2009, Article 35.9)
+        <br>Example 1:  In English the word "Professor" when abbreviated  is written Prof., whereas the words "Doctor", "Mister", "Mountain", and "Saint" when abbreviated are written Dr, Mr, Mt,  and St respectively , their abbreviations being contractions.
+        <br>Example 2: 'G.K. Chesterton'; 'Mrs M.L. Bland'; 'MCC' (an initialism representing Marylebone Cricket Club, and NOT a Roman Numeral  (See Item 5, <br>Example 1 above);  'USS Enterprise', an initialism; and, 'Pride of NASA', an acronym are both acceptable.
+        </p><p>
+        19. Unless linguistic custom demands otherwise, the second and subsequent elements of a hyphenated word are to start with a lower case letter. (ICNCP 2009, Articles 11.1, et.seq.; Article 35.12)
+
+        <br>Example 1: 'Blue-Eyed', 'Choo-Choo' and 'Show-Off' would not be allowed.
+        <br>Example 2: 'Blue-eyed' 'Choo-choo' and 'Show-off', would be allowed. Further where grammatically acceptable to drop the hyphen 'Choo Choo' would be acceptable. 
+        (See also Article 35.11)
+        </p><p>
+        20. As noted in Number 24, acceptance of all names is subject to review by the Registration Committee.  The Committee wishes to clarify that there has been a proliferation of the use of specific sample related prefixes,  such as "Siloam," attached to existing variety names; repetition of the one word in a one word variety name to create as new name , i.e. 'Candy Candy'; and, the use of possessives in front of existing variety names (see also 11H above.) Such usage will be reviewed carefully and rejections may occur where the use appears related only to the marketability of the name, rather than the relationship to a specific reason for the reuse of the base name.  Thus, simply placing an prefix sample name will no longer be accepted on its face vlaue. Rather an analysis will be done to ascertain that there is a purpose other than using a name that has garnered favor.
+        <br>
+        Further, regarding Committee review of possessives it should be noted that the Committee will use, in part, the following, 3 part, test:
+        </p><p>
+        1)   Where the possessive is placed before a word or series of words that constitute an existing variety name but the "thing" being possessed is broadly defined such as laughter we could have several people whose laughter is distinctly theirs and unrelated to a characteristic of the genome.  Thus, 'Kevin's Laughter' would be acceptable.
+        </p><p>
+        2)   Where the possessive is placed before a word or series of words that constitute an existing variety name but the "thing" being possessed is related to a genome characteristic, the use will be rejected. Thus, 'Kevin's Rebloomer' would be rejected for at least two reasons.  Similarly 'Kevin's Humdinger' may be rejected as it could be construed to apply to the size or quality of the genome itself.
+        </p><p>
+        3)   Where the possessive is placed before a word or series of words that DO NOT constitute an existing variety name and the "thing" being "possessed" would not otherwise result in rejection, the possessive is not an issue and the name would be accepted. 
+        </p>
+        </div>
+    </div>
 </body>
 <script type="text/paperscript" src="./assets/js/culture.js" canvas="canvas" ></script>
 </html>

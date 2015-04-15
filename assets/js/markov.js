@@ -1337,38 +1337,65 @@ var randomIntFromInterval = function(min,max) {
 }
 
 $(document).ready(function() {
+    $('#modal').hide(0);
+    $('#name').click(function(event) {
+       $('#modal').show(0);
+    });
+    $('#cancel').click(function(event) {
+       $('#modal').hide(0);
+    });
+
+
+
+
     function watchFunction(){
         watch(globals, function(){
             var title = make_title(3 + Math.floor(3 * Math.random()));
             $('#generated_title').html(title);
+            $('#name-field').attr("placeholder", title);
+           
         });
     }
     var title = make_title(3 + Math.floor(3 * Math.random()));
     $('#generated_title').html(title);
+    $('#name-field').attr("placeholder", title);
     $('#generated_percent').html(randomIntFromInterval(6500, 9999)/100);
     setTimeout(function(){
         var o;
         globals.watch('value', function(){
             var title = make_title(3 + Math.floor(3 * Math.random()));
             $('#generated_title').html(title);
+            $('#name-field').attr("placeholder", title);
             $('#generated_percent').html(randomIntFromInterval(6500, 9999)/100);
-            var dataURL= canvas.toDataURL();
-
-            var d = new Date();
-            var date = d.getTime();
-            var imgname ='metagenome-'+date+'.png';
-
             // use jQuery to POST the dataUrl to you php server
+        });
+    }, 5000);
+    $('#submit').click(function(event) {
+        var t;
+        t = $('#name-field').val();
+        console.log(t);
+        var dataURL= canvas.toDataURL();
+
+        var d = new Date();
+        var date = d.getTime();
+        var imgname ='metagenome-'+date+'.png';
+
+        if(t.length >= 5){
             $.ajax({
                 type: "POST",
                 url: "./server/tumblr.php",
-                data: {image: dataURL, name: title }
+                data: {image: dataURL, name: t }
             }).done(function( response ) {
                 // Done...report success or failure
                 // You will get back the temp file name
                 // or "Unable to save this image."
                 console.log(response);
+                window.location.href = 'http://library.metagenome.club/';
             });
-        });
-    }, 5000);
+            $('#modal').hide();
+        } else {
+            $('#modal').addClass('flash');
+        }
+    });
+
 });

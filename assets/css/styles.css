@@ -2,6 +2,7 @@ body {
   margin: 0;
   overflow: hidden;
   background-color: #ffffff;
+  font-family: helvetica, arial, sans-serif;
 }
 #title {
   position: fixed;
@@ -60,4 +61,114 @@ body {
   left: 20px;
   top: 40px;
   z-index: 100;
+}
+#modal {
+  position: fixed;
+  background-color: #fff;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  z-index: 1000;
+  padding: 5% 20%;
+  overflow: scroll;
+}
+#modal p {
+  color: #282D87;
+  font-weight: bold;
+  line-height: 1.6;
+}
+.button {
+  color: #fff;
+  background-color: #000;
+  text-decoration: none;
+  font-weight: bold;
+  padding: 6px 15px;
+  border: 3px #000 solid;
+}
+#cancel {
+  background-color: #D00072;
+  border-color: #D00072;
+  color: #fff;
+}
+#cancel:hover {
+  background-color: #fff;
+  color: #000;
+}
+#submit {
+  background-color: #369C23;
+  border-color: #369C23;
+}
+#submit:hover {
+  background-color: #fff;
+  color: #000;
+}
+input[type=text],
+textarea {
+  -webkit-transition: all 0.3s ease-in-out;
+  -moz-transition: all 0.3s ease-in-out;
+  -ms-transition: all 0.3s ease-in-out;
+  -o-transition: all 0.3s ease-in-out;
+  outline: none;
+  border: 1px solid #000;
+}
+input[type=text]:focus {
+  box-shadow: 0 0 5px #fff;
+  border: 1px solid #000;
+  background-color: #3E97DC;
+}
+#name-field {
+  height: 40px;
+  width: 70%;
+  padding: 10px;
+  margin-bottom: 30px;
+  font-size: 24px;
+  font-weight: bold;
+  color: #F7EB0A;
+}
+::-webkit-input-placeholder {
+  color: #3E97DC;
+}
+:-moz-placeholder {
+  /* Firefox 18- */
+  color: #3E97DC;
+}
+::-moz-placeholder {
+  /* Firefox 19+ */
+  color: #3E97DC;
+}
+:-ms-input-placeholder {
+  color: #3E97DC;
+}
+#conventions {
+  padding-top: 50px;
+}
+.flash {
+  -moz-animation: flash 1s ease-out;
+  -moz-animation-iteration-count: 1;
+  -webkit-animation: flash 1s ease-out;
+  -webkit-animation-iteration-count: 1;
+  -ms-animation: flash 1s ease-out;
+  -ms-animation-iteration-count: 1;
+}
+@-webkit-keyframes flash {
+  0% {
+    background-color: none;
+  }
+  50% {
+    background-color: #fbf8b2;
+  }
+  100% {
+    background-color: none;
+  }
+}
+@-ms-keyframes flash {
+  0% {
+    background-color: none;
+  }
+  50% {
+    background-color: #fbf8b2;
+  }
+  100% {
+    background-color: none;
+  }
 }
